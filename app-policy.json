@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "enabled": true,
+  "minSupportedVersion": "0.3.7",
+  "latestVersion": "0.3.7",
+  "forceUpdate": false,
+  "softUpdate": true,
+  "message": "发现新版本，请更新后继续使用。",
+  "disabledMessage": "当前版本已停用，请前往 GitHub 下载最新版。",
+  "downloadUrl": "https://github.com/yuanglove/yatori-go-android/releases/latest",
+  "updatedAt": "2026-07-04 14:40:00"
+}
