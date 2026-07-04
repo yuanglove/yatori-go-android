@@ -87,13 +87,13 @@ yatori-go-android/
 常用构建入口在工作区脚本中：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -NoProfile -File D:\YatoriAndroidWork\scripts\build-release-apk.ps1
+powershell -ExecutionPolicy Bypass -NoProfile -File "D:\AI\智能体工作目录\claude工作目录\学习\YatoriAndroidWork\scripts\build-release-apk.ps1"
 ```
 
 构建产物：
 
 ```text
-D:\YatoriAndroidWork\release\app-release-debugsigned.apk
+D:\AI\智能体工作目录\claude工作目录\学习\YatoriAndroidWork\release\app-release-debugsigned.apk
 ```
 
 ## 数据路径
