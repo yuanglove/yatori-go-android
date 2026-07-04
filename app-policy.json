@@ -4,7 +4,7 @@
   "_enabled说明": "是否允许应用使用。true=正常使用；false=远程停用应用。",
   "enabled": true,
   "_minSupportedVersion说明": "最低允许使用版本。低于该版本时可触发强制更新。",
-  "minSupportedVersion": "0.3.8",
+  "minSupportedVersion": "0.3.7",
   "_latestVersion说明": "当前最新版本。高于用户安装版本时可触发更新提示。",
   "latestVersion": "0.3.8",
   "_forceUpdate说明": "是否强制更新。true=有新版本时必须更新；false=不强制。",
