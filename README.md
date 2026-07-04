@@ -75,8 +75,6 @@ yatori-go-android/
 │       │   ├── EngineRegistry.kt       Go engine 持有
 │       │   └── YatoriForegroundService.kt
 │       └── res/                        主题、图标、FileProvider 配置
-├── announcement.json                   远程公告
-├── app-policy.json                     远程策略
 ├── build.gradle.kts
 ├── settings.gradle.kts
 └── gradlew.bat
