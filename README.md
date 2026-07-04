@@ -5,6 +5,7 @@ Android wrapper for Yatori. This repository hosts Android releases, update metad
 ## Remote Metadata
 
 - Announcement: `https://raw.githubusercontent.com/yuanglove/yatori-go-android/main/announcement.json`
+- Remote policy: `https://raw.githubusercontent.com/yuanglove/yatori-go-android/main/app-policy.json`
 - Releases: `https://github.com/yuanglove/yatori-go-android/releases`
 - Latest release API: `https://api.github.com/repos/yuanglove/yatori-go-android/releases/latest`
 
