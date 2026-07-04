@@ -2,6 +2,7 @@ package app.yatori.android
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -16,24 +17,23 @@ import android.os.Looper
 import android.util.Base64
 import android.util.Log
 import android.webkit.ConsoleMessage
-import android.webkit.WebResourceResponse
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
-import android.webkit.WebViewClient
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.webkit.WebViewAssetLoader
-import mobileapi.Mobileapi
+import mobilecore.Mobilecore
 import java.io.File
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : Activity() {
     private lateinit var webView: WebView
     private lateinit var assetLoader: WebViewAssetLoader
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
@@ -49,18 +49,11 @@ class MainActivity : AppCompatActivity() {
             .build()
         WebView.setWebContentsDebuggingEnabled(true)
         webView.webViewClient = object : WebViewClient() {
-            override fun shouldInterceptRequest(
-                view: WebView?,
-                request: WebResourceRequest?,
-            ): WebResourceResponse? {
+            override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
                 return request?.url?.let { assetLoader.shouldInterceptRequest(it) }
             }
 
-            override fun onReceivedError(
-                view: WebView?,
-                request: WebResourceRequest?,
-                error: WebResourceError?,
-            ) {
+            override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
                 super.onReceivedError(view, request, error)
                 if (request?.isForMainFrame == true) {
                     Log.e(TAG, "WebView load error: ${error?.errorCode} ${error?.description} url=${request.url}")
@@ -91,7 +84,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     startActivityForResult(intent, REQUEST_FILE_CHOOSER)
                     true
-                } catch (t: Throwable) {
+                } catch (_: Throwable) {
                     this@MainActivity.filePathCallback = null
                     false
                 }
@@ -152,10 +145,14 @@ class MainActivity : AppCompatActivity() {
             try {
                 val dataDir = File(filesDir, "yatori").absolutePath
                 Log.i(TAG, "Initializing engine at $dataDir")
-                val engine = Mobileapi.newEngine(dataDir)
-                engine.init()
-                EngineRegistry.engine = engine
-                Log.i(TAG, "Engine initialized")
+                val result = Mobilecore.init(dataDir)
+                val ok = org.json.JSONObject(result).optBoolean("ok")
+                if (!ok) {
+                    throw IllegalStateException(org.json.JSONObject(result).optString("error", "init failed"))
+                }
+                validateBundledCoreMetadata()
+                EngineRegistry.initialized = true
+                Log.i(TAG, "Mobile core initialized")
                 runOnUiThread {
                     webView.evaluateJavascript("window.dispatchEvent(new Event('yatori-engine-ready'))", null)
                 }
@@ -168,6 +165,21 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }.start()
+    }
+
+    private fun validateBundledCoreMetadata() {
+        val schemaText = assets.open("core/api-schema.json").bufferedReader(Charsets.UTF_8).use { it.readText() }
+        val versionText = assets.open("core/yatori-core-version.json").bufferedReader(Charsets.UTF_8).use { it.readText() }
+        val schema = org.json.JSONObject(schemaText)
+        val version = org.json.JSONObject(versionText)
+        val schemaVersion = schema.optInt("schemaVersion", -1)
+        if (schemaVersion != SUPPORTED_API_SCHEMA_VERSION) {
+            throw IllegalStateException("mobilecore schemaVersion=$schemaVersion, app supports $SUPPORTED_API_SCHEMA_VERSION")
+        }
+        Log.i(
+            TAG,
+            "Bundled core version=${version.optString("desktopCoreVersion")} commit=${version.optString("coreCommit")} schema=$schemaVersion aar=${version.optString("aarFile")}",
+        )
     }
 
     @Deprecated("Deprecated by Android framework, used for WebView file chooser compatibility.")
@@ -194,20 +206,18 @@ class MainActivity : AppCompatActivity() {
             }
             startActivityForResult(intent, REQUEST_ACCOUNT_DB_IMPORT)
         }
-        return """{"ok":true,"data":"已打开账号数据库选择器"}"""
+        return """{"ok":true,"data":"已打开账号数据库选择器","error":"","code":""}"""
     }
 
     private fun importAccountDatabase(uri: Uri) {
         Thread {
             val result = try {
-                val data = contentResolver.openInputStream(uri)?.use { it.readBytes() }
-                    ?: return@Thread dispatchAccountImportResult("""{"ok":false,"error":"无法读取账号数据库"}""")
-                val encoded = Base64.encodeToString(data, Base64.NO_WRAP)
-                val engine = EngineRegistry.engine
-                    ?: return@Thread dispatchAccountImportResult("""{"ok":false,"error":"Engine 未初始化"}""")
-                engine.importAccountsDBBase64(encoded)
+                val bytes = contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                    ?: return@Thread dispatchAccountImportResult("""{"ok":false,"data":null,"error":"无法读取账号数据库","code":"IMPORT_READ_FAILED"}""")
+                val encoded = Base64.encodeToString(bytes, Base64.NO_WRAP)
+                Mobilecore.importAccountsDBBase64(encoded)
             } catch (t: Throwable) {
-                """{"ok":false,"error":${org.json.JSONObject.quote(t.message ?: t.javaClass.simpleName)}}"""
+                """{"ok":false,"data":null,"error":${org.json.JSONObject.quote(t.message ?: t.javaClass.simpleName)},"code":"ANDROID_IMPORT_FAILED"}"""
             }
             dispatchAccountImportResult(result)
         }.start()
@@ -314,5 +324,6 @@ class MainActivity : AppCompatActivity() {
         private const val APP_URL = "https://appassets.androidplatform.net/assets/index.html"
         private const val REQUEST_FILE_CHOOSER = 2001
         private const val REQUEST_ACCOUNT_DB_IMPORT = 2002
+        private const val SUPPORTED_API_SCHEMA_VERSION = 1
     }
 }

@@ -1,0 +1,12 @@
+﻿{
+    "androidVersion":  "",
+    "desktopCoreVersion":  "0.3.8",
+    "coreCommit":  "5dc05da",
+    "apiSchemaVersion":  1,
+    "aarFile":  "yatori-mobile-v0.3.8.aar",
+    "aarSha256":  "38256b61e79e3ac3baf3b06849d0410ba0bb746e61edb744bb0409be4629cdaa",
+    "aarBytes":  115851624,
+    "target":  "android/arm64",
+    "androidApi":  24,
+    "builtAt":  "2026-07-04 19:56:51"
+}

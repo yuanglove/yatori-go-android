@@ -1,0 +1,11 @@
+﻿{
+    "generatedAt":  "2026-07-04 19:56:51",
+    "desktopCoreVersion":  "0.3.8",
+    "coreCommit":  "5dc05da",
+    "apiSchemaVersion":  1,
+    "files":  {
+                  "yatori-mobile-v0.3.8.aar":  "38256b61e79e3ac3baf3b06849d0410ba0bb746e61edb744bb0409be4629cdaa",
+                  "api-schema.json":  "eb19c9aa95182f201d28216bd67b7b7fe507cf6919313ade08fe6fd33c7d3e5f",
+                  "yatori-core-version.json":  "bfa78d6901c60b8d5ae37dbc61fe6ca34c34457710e6d48380deae1109ca1af1"
+              }
+}

@@ -1,9 +1,9 @@
 {
-  "id": "2026-07-04-android-repo",
-  "title": "Yatori Android 公告",
-  "content": "本项目代码已开源，仅供学习与技术交流使用，严禁任何形式的倒卖、贩卖或商业牟利。\n\n请在遵守法律法规、平台规则和账号授权范围的前提下使用本软件。任何个人或组织使用本项目代码或软件进行的违法违规行为，均与项目作者无关，相关责任由使用者自行承担。\n\n如本项目内容对相关公司或平台造成影响，请通过 GitHub 仓库联系，我会及时处理。",
+  "id": "2026-07-04-v0.3.8",
+  "title": "Yatori Android v0.3.8",
+  "content": "Yatori Android 已同步到 v0.3.8。本版本接入桌面核心 AAR 校验流程，修复仪表盘账号统计、配置导入、账号数据库导入导出和部分中文乱码问题。后续 Android 版只负责移动端适配，核心业务逻辑统一来自 yatori-go-desktop。",
   "level": "info",
   "enabled": true,
-  "updatedAt": "2026-07-04 14:10:00",
-  "url": "https://github.com/yuanglove/yatori-go-android"
+  "updatedAt": "2026-07-04 20:00:00",
+  "url": "https://github.com/yuanglove/yatori-go-android/releases"
 }

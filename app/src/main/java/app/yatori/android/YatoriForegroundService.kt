@@ -8,6 +8,8 @@ import android.app.Service
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import mobilecore.Mobilecore
+import org.json.JSONArray
 import org.json.JSONObject
 
 class YatoriForegroundService : Service() {
@@ -15,7 +17,7 @@ class YatoriForegroundService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            ACTION_STOP_ALL -> EngineRegistry.engine?.stopAllTasks()
+            ACTION_STOP_ALL -> stopAllTasks()
         }
         val running = runningCount()
         if (running <= 0) {
@@ -28,7 +30,8 @@ class YatoriForegroundService : Service() {
     }
 
     private fun runningCount(): Int {
-        val raw = EngineRegistry.engine?.getTaskStatuses() ?: return 0
+        if (!EngineRegistry.initialized) return 0
+        val raw = Mobilecore.getTaskStatusesJSON()
         val arr = JSONObject(raw).optJSONArray("data") ?: return 0
         var count = 0
         for (i in 0 until arr.length()) {
@@ -53,6 +56,17 @@ class YatoriForegroundService : Service() {
             .addAction(android.R.drawable.ic_menu_close_clear_cancel, "停止全部", stopPending)
             .setOngoing(true)
             .build()
+    }
+
+    private fun stopAllTasks() {
+        if (!EngineRegistry.initialized) return
+        val arr: JSONArray = JSONObject(Mobilecore.getTaskStatusesJSON()).optJSONArray("data") ?: return
+        for (i in 0 until arr.length()) {
+            val item = arr.getJSONObject(i)
+            if (item.optString("state") == "running") {
+                Mobilecore.stopTask(item.optString("uid"))
+            }
+        }
     }
 
     companion object {
