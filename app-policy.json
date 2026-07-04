@@ -1,12 +1,22 @@
 {
+  "_comment": "Yatori Android remote policy. JSON does not support // comments, so these _comment fields are documentation and are ignored by the app.",
   "schemaVersion": 1,
+  "_comment_enabled": "Set enabled to false to remotely disable the app for all users who can fetch this policy.",
   "enabled": true,
+  "_comment_minSupportedVersion": "Versions lower than minSupportedVersion are blocked and must update before continuing.",
   "minSupportedVersion": "0.3.7",
+  "_comment_latestVersion": "latestVersion is used for soft or forced update prompts. Keep it in sync with GitHub Releases.",
   "latestVersion": "0.3.7",
+  "_comment_forceUpdate": "When true and latestVersion is newer than the installed version, the app shows a non-dismissible update blocker.",
   "forceUpdate": false,
+  "_comment_softUpdate": "When true and latestVersion is newer, the app shows a normal update reminder that users can dismiss.",
   "softUpdate": true,
+  "_comment_message": "Message shown for forced updates.",
   "message": "发现新版本，请更新后继续使用。",
+  "_comment_disabledMessage": "Message shown when enabled is false.",
   "disabledMessage": "当前版本已停用，请前往 GitHub 下载最新版。",
+  "_comment_downloadUrl": "The button in update/disabled screens opens this URL.",
   "downloadUrl": "https://github.com/yuanglove/yatori-go-android/releases/latest",
-  "updatedAt": "2026-07-04 14:40:00"
+  "_comment_updatedAt": "Human-readable policy update time. This is displayed in the forced update/disabled dialog.",
+  "updatedAt": "2026-07-04 14:55:00"
 }
