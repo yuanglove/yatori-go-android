@@ -1,0 +1,9 @@
+{
+  "id": "2026-07-04-android-repo",
+  "title": "Yatori Android 公告",
+  "content": "Yatori Android 已切换到独立仓库发布公告和更新。后续 Android 版本、安装包和公告会从本仓库获取。",
+  "level": "info",
+  "enabled": true,
+  "updatedAt": "2026-07-04 14:10:00",
+  "url": "https://github.com/yuanglove/yatori-go-android"
+}
