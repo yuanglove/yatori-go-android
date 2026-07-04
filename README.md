@@ -49,36 +49,14 @@ v0.3.7
 | 配置导入导出 | 支持 | Android 文件选择器/分享能力 |
 | 账号数据导入导出 | 支持 | 导入/导出 `yatori.db` |
 | 深色/浅色主题 | 支持 | Android 端跟随系统夜间模式 |
-| 远程公告 | 支持 | 从本仓库 `announcement.json` 获取 |
-| 远程策略 | 支持 | 从本仓库 `app-policy.json` 获取 |
-| 强制更新 | 支持 | 通过远程策略控制 |
-| 远程停用 | 支持 | 通过远程策略控制 |
-
-## 远程配置
-
-本应用运行时会从本仓库读取以下远程文件：
-
-| 文件 | 作用 |
-| --- | --- |
-| [`announcement.json`](https://raw.githubusercontent.com/yuanglove/yatori-go-android/main/announcement.json) | 应用公告 |
-| [`app-policy.json`](https://raw.githubusercontent.com/yuanglove/yatori-go-android/main/app-policy.json) | 远程停用、强制更新、普通更新提醒 |
-
-`app-policy.json` 常用字段：
-
-```json
-{
-  "enabled": true,
-  "minSupportedVersion": "0.3.7",
-  "latestVersion": "0.3.7",
-  "forceUpdate": false,
-  "softUpdate": true
-}
-```
-
-- `enabled=false`：远程停用应用。
-- `minSupportedVersion` 高于用户安装版本：强制更新。
-- `latestVersion` 高于用户安装版本且 `forceUpdate=true`：强制更新。
-- `latestVersion` 高于用户安装版本且 `softUpdate=true`：普通更新提醒。
+| 远程公告 | 支持 | 从本仓库公告文件获取 |
+| 远程策略 | 支持 | 支持远程停用、强制更新和普通更新提醒 |
+| 学习通 | 已实测可用 | 支持任务执行、日志、停止、章节测验答题等流程 |
+| 英华学堂 | 已实测可用 | 可正常登录并进入课程流程 |
+| 海旗科技 | 已实测可用 | worker 运行正常 |
+| WeLearn 随行课堂 | 已实测可用 | 支持学时模式和完成度模式 |
+| 智慧职教（ICVE） | 已接入并持续完善 | 支持 Cookie 登录、课程进度、测验/作业识别、题库/AI 答题和保存/提交诊断 |
+| 其他原项目平台 | 支持入口 | 复用原项目 logic，具体效果需按账号继续实测 |
 
 ## 项目结构
 
