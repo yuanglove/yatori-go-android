@@ -1,12 +1,13 @@
-﻿{
-    "androidVersion":  "",
-    "desktopCoreVersion":  "0.3.8",
-    "coreCommit":  "5dc05da",
-    "apiSchemaVersion":  1,
-    "aarFile":  "yatori-mobile-v0.3.8.aar",
-    "aarSha256":  "38256b61e79e3ac3baf3b06849d0410ba0bb746e61edb744bb0409be4629cdaa",
-    "aarBytes":  115851624,
-    "target":  "android/arm64",
-    "androidApi":  24,
-    "builtAt":  "2026-07-04 19:56:51"
+{
+  "androidVersion": "0.3.9",
+  "desktopCoreVersion": "0.3.9",
+  "coreCommit": "local-v0.3.9-examcode-vector-stripped",
+  "apiSchemaVersion": 1,
+  "aarFile": "yatori-mobile-v0.3.9.aar",
+  "aarSha256": "b87ff5eb812a8c88d2082c006f45dbb26453d3842f6521acd79128a9a6bdf05e",
+  "aarBytes": 115877376,
+  "target": "android/arm64",
+  "androidApi": 24,
+  "ldflags": "-trimpath -s -w",
+  "builtAt": "2026-07-07 21:21:14"
 }

@@ -44,6 +44,9 @@ class YatoriBridge(private val activity: MainActivity) {
                     result
                 }
                 "GetTaskStatuses" -> core(Mobilecore.getTaskStatusesJSON())
+                "ListXXTExamCodeRequests" -> core(Mobilecore.listXXTExamCodeRequestsJSON())
+                "AnswerXXTExamCodeRequest" -> core(Mobilecore.answerXXTExamCodeRequest(args.getString(0), args.getString(1)))
+                "CancelXXTExamCodeRequest" -> core(Mobilecore.cancelXXTExamCodeRequest(args.getString(0)))
                 "GetDashboard" -> buildDashboard()
                 "TailLogFile" -> core(Mobilecore.getRecentLogsJSON(args.optLong(0, 200)))
                 "GetRecentLogs" -> core(Mobilecore.getRecentLogsJSON(args.optLong(0, 200)))

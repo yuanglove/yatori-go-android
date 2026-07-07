@@ -3,19 +3,27 @@ package app.yatori.android
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.InputType
 import android.util.Base64
 import android.util.Log
+import android.view.Gravity
+import android.view.ViewGroup
 import android.webkit.ConsoleMessage
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
@@ -25,6 +33,11 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -37,6 +50,10 @@ class MainActivity : Activity() {
     private lateinit var webView: WebView
     private lateinit var assetLoader: WebViewAssetLoader
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
+    private val examCodeHandler = Handler(Looper.getMainLooper())
+    private var examCodeDialog: AlertDialog? = null
+    private var activeExamCodeRequestId: String? = null
+    private val snoozedExamCodeRequests = mutableMapOf<String, Long>()
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -155,6 +172,7 @@ class MainActivity : Activity() {
                 Log.i(TAG, "Mobile core initialized")
                 runOnUiThread {
                     webView.evaluateJavascript("window.dispatchEvent(new Event('yatori-engine-ready'))", null)
+                    startExamCodePolling()
                 }
             } catch (t: Throwable) {
                 Log.e(TAG, "Engine init failed", t)
@@ -162,6 +180,240 @@ class MainActivity : Activity() {
                 runOnUiThread {
                     Toast.makeText(this, "Yatori 初始化失败：${t.message ?: t.javaClass.simpleName}", Toast.LENGTH_LONG).show()
                     webView.evaluateJavascript("window.dispatchEvent(new CustomEvent('yatori-engine-error', { detail: $message }))", null)
+                }
+            }
+        }.start()
+    }
+
+    private fun startExamCodePolling() {
+        examCodeHandler.removeCallbacksAndMessages(null)
+        examCodeHandler.postDelayed(object : Runnable {
+            override fun run() {
+                pollExamCodeRequests()
+                examCodeHandler.postDelayed(this, 2000)
+            }
+        }, 1000)
+    }
+
+    private fun pollExamCodeRequests() {
+        if (!EngineRegistry.initialized || isFinishing || isDestroyed) return
+        Thread {
+            try {
+                val result = Mobilecore.listXXTExamCodeRequestsJSON()
+                val obj = org.json.JSONObject(result)
+                if (!obj.optBoolean("ok")) {
+                    return@Thread
+                }
+                val arr = obj.optJSONArray("data") ?: org.json.JSONArray()
+                val now = System.currentTimeMillis()
+                var target: org.json.JSONObject? = null
+                var index = 0
+                for (i in 0 until arr.length()) {
+                    val item = arr.optJSONObject(i) ?: continue
+                    val id = item.optString("id")
+                    if (item.optString("status") == "pending" && (snoozedExamCodeRequests[id] ?: 0L) <= now) {
+                        target = item
+                        index = i + 1
+                        break
+                    }
+                }
+                val pending = target ?: return@Thread
+                Log.i(TAG, "exam code pending found id=${pending.optString("id")} total=${arr.length()}")
+                runOnUiThread {
+                    showExamCodeDialog(pending, index, arr.length())
+                }
+            } catch (t: Throwable) {
+                Log.w(TAG, "poll exam code failed", t)
+            }
+        }.start()
+    }
+
+    private fun showExamCodeDialog(req: org.json.JSONObject, index: Int, total: Int) {
+        val id = req.optString("id")
+        if (id.isBlank() || activeExamCodeRequestId == id || examCodeDialog?.isShowing == true) {
+            return
+        }
+        activeExamCodeRequestId = id
+        val account = req.optString("account", req.optString("uid", ""))
+        val examName = req.optString("examName", "")
+        val taskRefId = req.optString("taskRefId", "")
+
+        val card = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(20), dp(18), dp(20), dp(16))
+            background = roundedBg(Color.WHITE, dp(18), 0)
+        }
+        val header = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        val icon = FrameLayout(this).apply {
+            background = roundedBg(Color.rgb(232, 240, 255), dp(14), 0)
+            addView(ImageView(this@MainActivity).apply {
+                setImageResource(resources.getIdentifier("ic_exam_key", "drawable", packageName))
+                alpha = 0.95f
+            }, FrameLayout.LayoutParams(dp(28), dp(28), Gravity.CENTER))
+        }
+        header.addView(icon, LinearLayout.LayoutParams(dp(44), dp(44)))
+        val titleBox = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(12), 0, 0, 0)
+        }
+        titleBox.addView(TextView(this).apply {
+            text = "需要输入考试码"
+            textSize = 19f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(Color.rgb(23, 32, 51))
+        })
+        titleBox.addView(TextView(this).apply {
+            text = if (total > 1) "待处理 $index/$total · 仅暂停当前考试" else "仅暂停当前考试，其他任务继续"
+            textSize = 12.5f
+            setTextColor(Color.rgb(95, 107, 124))
+            setPadding(0, dp(3), 0, 0)
+        })
+        header.addView(titleBox, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+        card.addView(header)
+
+        card.addView(TextView(this).apply {
+            text = "检测到「$examName」需要考试码，请输入后继续执行。"
+            textSize = 14f
+            setTextColor(Color.rgb(71, 84, 103))
+            setPadding(0, dp(14), 0, dp(10))
+        })
+
+        val info = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(12), dp(10), dp(12), dp(10))
+            background = roundedBg(Color.rgb(246, 248, 251), dp(12), Color.rgb(224, 230, 240))
+        }
+        info.addView(metaLine("账号", account))
+        info.addView(metaLine("考试", examName))
+        if (taskRefId.isNotBlank()) info.addView(metaLine("任务", taskRefId))
+        card.addView(info, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+            bottomMargin = dp(14)
+        })
+
+        val input = EditText(this).apply {
+            hint = "例如：t8918554"
+            setSingleLine(true)
+            textSize = 16f
+            inputType = InputType.TYPE_CLASS_TEXT
+            setTextColor(Color.rgb(23, 32, 51))
+            setHintTextColor(Color.rgb(152, 162, 179))
+            setPadding(dp(14), 0, dp(14), 0)
+            background = roundedBg(Color.rgb(250, 252, 255), dp(12), Color.rgb(37, 99, 235))
+        }
+        card.addView(input, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(52)))
+
+        val actions = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(0, dp(16), 0, 0)
+        }
+        val cancelBtn = dialogButton("取消考试", Color.rgb(220, 38, 38), Color.TRANSPARENT, false)
+        val laterBtn = dialogButton("稍后处理", Color.rgb(71, 84, 103), Color.rgb(241, 245, 249), false)
+        val submitBtn = dialogButton("提交并继续", Color.WHITE, Color.rgb(37, 99, 235), true)
+        actions.addView(cancelBtn, LinearLayout.LayoutParams(0, dp(44), 1f).apply { rightMargin = dp(8) })
+        actions.addView(laterBtn, LinearLayout.LayoutParams(0, dp(44), 1f).apply { rightMargin = dp(8) })
+        actions.addView(submitBtn, LinearLayout.LayoutParams(0, dp(44), 1.25f))
+        card.addView(actions)
+
+        examCodeDialog = AlertDialog.Builder(this)
+            .setView(card)
+            .create()
+        laterBtn.setOnClickListener {
+            examCodeDialog?.let { dialog ->
+                snoozedExamCodeRequests[id] = System.currentTimeMillis() + 15000
+                activeExamCodeRequestId = null
+                dialog.dismiss()
+            }
+        }
+        cancelBtn.setOnClickListener {
+            examCodeDialog?.let { dialog ->
+                answerOrCancelExamCode(id, null)
+                activeExamCodeRequestId = null
+                dialog.dismiss()
+            }
+        }
+        submitBtn.setOnClickListener {
+            examCodeDialog?.let { dialog ->
+                val code = input.text?.toString()?.trim().orEmpty()
+                if (code.isBlank()) {
+                    input.requestFocus()
+                    Toast.makeText(this, "请输入考试码", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                answerOrCancelExamCode(id, code)
+                activeExamCodeRequestId = null
+                dialog.dismiss()
+            }
+        }
+        examCodeDialog?.setOnShowListener {
+            examCodeDialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            examCodeDialog?.window?.setDimAmount(0.46f)
+            input.requestFocus()
+        }
+        examCodeDialog?.setOnDismissListener {
+            if (activeExamCodeRequestId == id) {
+                activeExamCodeRequestId = null
+            }
+        }
+        examCodeDialog?.show()
+    }
+
+    private fun metaLine(label: String, value: String): TextView {
+        return TextView(this).apply {
+            text = "$label：$value"
+            textSize = 13.5f
+            setTextColor(Color.rgb(52, 64, 84))
+            setPadding(0, dp(2), 0, dp(2))
+        }
+    }
+
+    private fun dialogButton(textValue: String, textColor: Int, bgColor: Int, bold: Boolean): TextView {
+        return TextView(this).apply {
+            text = textValue
+            textSize = 14f
+            gravity = Gravity.CENTER
+            setTextColor(textColor)
+            typeface = if (bold) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
+            background = roundedBg(bgColor, dp(12), if (bgColor == Color.TRANSPARENT) Color.rgb(226, 232, 240) else 0)
+        }
+    }
+
+    private fun roundedBg(color: Int, radius: Int, strokeColor: Int): GradientDrawable {
+        return GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = radius.toFloat()
+            setColor(color)
+            if (strokeColor != 0) {
+                setStroke(dp(1), strokeColor)
+            }
+        }
+    }
+
+    private fun dp(value: Int): Int {
+        return (value * resources.displayMetrics.density + 0.5f).toInt()
+    }
+
+    private fun answerOrCancelExamCode(id: String, code: String?) {
+        Thread {
+            try {
+                val result = if (code == null) {
+                    Mobilecore.cancelXXTExamCodeRequest(id)
+                } else {
+                    Mobilecore.answerXXTExamCodeRequest(id, code)
+                }
+                val obj = org.json.JSONObject(result)
+                val ok = obj.optBoolean("ok")
+                val msg = if (ok) "考试码已提交" else obj.optString("error", "考试码处理失败")
+                runOnUiThread {
+                    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+                }
+            } catch (t: Throwable) {
+                Log.e(TAG, "answer exam code failed", t)
+                runOnUiThread {
+                    Toast.makeText(this, "考试码处理失败：${t.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }.start()
