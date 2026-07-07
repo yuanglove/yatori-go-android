@@ -1,9 +1,9 @@
 {
-  "id": "2026-07-07-v0.3.9",
-  "title": "Yatori Android v0.3.9",
-  "content": "Yatori Android 已更新到 v0.3.9。本版本同步桌面版核心 v0.3.9，新增学习通考试码原生弹窗，修复旧账号配置缺省值导致的任务执行异常，并将考试码弹窗图标改为矢量图标，同时优化 APK 体积。Android 版继续只负责移动端适配，核心业务逻辑统一来自 yatori-go-desktop。",
-  "level": "info",
+  "id": "2026-07-07-notice-v0.3.9",
+  "title": "????",
+  "content": "本项目代码已开源，仅供学习与技术交流使用，严禁任何形式的倒卖、贩卖或商业牟利。\n\n请在遵守法律法规、平台规则和账号授权范围的前提下使用本软件。任何个人或组织使用本项目代码或软件进行的违法违规行为，均与项目作者无关，相关责任由使用者自行承担。\n\n如本项目内容对相关公司或平台造成影响，请通过 GitHub 仓库联系，我会及时处理。",
+  "level": "warn",
   "enabled": true,
-  "updatedAt": "2026-07-07 21:55:00",
+  "updatedAt": "2026-07-07 22:05:00",
   "url": "https://github.com/yuanglove/yatori-go-android/releases"
 }
