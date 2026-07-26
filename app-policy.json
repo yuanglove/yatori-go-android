@@ -6,7 +6,7 @@
   "_minSupportedVersion说明": "低于此版本时提示升级。",
   "minSupportedVersion": "0.3.7",
   "_latestVersion说明": "当前最新版本号。",
-  "latestVersion": "0.3.9",
+  "latestVersion": "0.4.0",
   "_forceUpdate说明": "是否强制更新。true=必须更新后使用，false=仅提示。",
   "forceUpdate": false,
   "_softUpdate说明": "是否显示普通更新提示。",

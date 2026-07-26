@@ -1,6 +1,6 @@
 ﻿param(
     [string]$DesktopReleaseDir = "",
-    [string]$Version = "0.3.8",
+    [string]$Version = "0.4.0",
     [int]$ExpectedApiSchemaVersion = 1
 )
 

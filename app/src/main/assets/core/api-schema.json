@@ -17,12 +17,7 @@
   "methods": [
     {
       "name": "Init",
-      "params": [
-        {
-          "name": "dataDir",
-          "type": "string"
-        }
-      ],
+      "params": [{ "name": "dataDir", "type": "string" }],
       "returns": "InitInfo"
     },
     {
@@ -42,22 +37,12 @@
     },
     {
       "name": "SaveConfigJSON",
-      "params": [
-        {
-          "name": "configJSON",
-          "type": "string"
-        }
-      ],
+      "params": [{ "name": "configJSON", "type": "string" }],
       "returns": "string"
     },
     {
       "name": "ImportConfigText",
-      "params": [
-        {
-          "name": "text",
-          "type": "string"
-        }
-      ],
+      "params": [{ "name": "text", "type": "string" }],
       "returns": "object"
     },
     {
@@ -67,32 +52,17 @@
     },
     {
       "name": "AddAccountJSON",
-      "params": [
-        {
-          "name": "accountJSON",
-          "type": "string"
-        }
-      ],
+      "params": [{ "name": "accountJSON", "type": "string" }],
       "returns": "string"
     },
     {
       "name": "UpdateAccountJSON",
-      "params": [
-        {
-          "name": "accountJSON",
-          "type": "string"
-        }
-      ],
+      "params": [{ "name": "accountJSON", "type": "string" }],
       "returns": "string"
     },
     {
       "name": "DeleteAccount",
-      "params": [
-        {
-          "name": "uid",
-          "type": "string"
-        }
-      ],
+      "params": [{ "name": "uid", "type": "string" }],
       "returns": "string"
     },
     {
@@ -102,42 +72,22 @@
     },
     {
       "name": "ImportAccountsDBBase64",
-      "params": [
-        {
-          "name": "base64",
-          "type": "string"
-        }
-      ],
+      "params": [{ "name": "base64", "type": "string" }],
       "returns": "{imported,updated,skipped}"
     },
     {
       "name": "GetCoursesJSON",
-      "params": [
-        {
-          "name": "uid",
-          "type": "string"
-        }
-      ],
+      "params": [{ "name": "uid", "type": "string" }],
       "returns": "Course[]"
     },
     {
       "name": "StartTask",
-      "params": [
-        {
-          "name": "uid",
-          "type": "string"
-        }
-      ],
+      "params": [{ "name": "uid", "type": "string" }],
       "returns": "string"
     },
     {
       "name": "StopTask",
-      "params": [
-        {
-          "name": "uid",
-          "type": "string"
-        }
-      ],
+      "params": [{ "name": "uid", "type": "string" }],
       "returns": "string"
     },
     {
@@ -147,12 +97,7 @@
     },
     {
       "name": "GetRecentLogsJSON",
-      "params": [
-        {
-          "name": "limit",
-          "type": "int64"
-        }
-      ],
+      "params": [{ "name": "limit", "type": "int64" }],
       "returns": "string[]"
     },
     {
@@ -173,25 +118,14 @@
     {
       "name": "AnswerXXTExamCodeRequest",
       "params": [
-        {
-          "name": "id",
-          "type": "string"
-        },
-        {
-          "name": "code",
-          "type": "string"
-        }
+        { "name": "id", "type": "string" },
+        { "name": "code", "type": "string" }
       ],
       "returns": "string"
     },
     {
       "name": "CancelXXTExamCodeRequest",
-      "params": [
-        {
-          "name": "id",
-          "type": "string"
-        }
-      ],
+      "params": [{ "name": "id", "type": "string" }],
       "returns": "string"
     }
   ],

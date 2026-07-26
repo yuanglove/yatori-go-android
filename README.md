@@ -8,7 +8,7 @@ Yatori Android 是 `yatori-go-desktop` 的移动端适配仓库，用来把桌�
 
 ## 当前版本
 
-v0.3.9
+v0.4.0
 
 ## 本项目做了什么
 
@@ -114,7 +114,7 @@ Android 构建依赖桌面仓库生成的四个产物：
 
 ```text
 yatori-go-desktop/release/
-├── yatori-mobile-v0.3.9.aar
+├── yatori-mobile-v0.4.0.aar
 ├── api-schema.json
 ├── yatori-core-version.json
 └── yatori-mobilecore-checksums.json
@@ -163,11 +163,11 @@ Android 只调用 `mobilecore.Mobilecore` 暴露的方法。所有方法应返�
 
 ```json
 {
-  "androidVersion": "0.3.9",
-  "desktopCoreVersion": "0.3.9",
+  "androidVersion": "0.4.0",
+  "desktopCoreVersion": "0.4.0",
   "coreCommit": "5dc05da",
   "apiSchemaVersion": 1,
-  "aarFile": "yatori-mobile-v0.3.9.aar",
+  "aarFile": "yatori-mobile-v0.4.0.aar",
   "aarSha256": "...",
   "target": "android/arm64",
   "androidApi": 24
@@ -194,7 +194,7 @@ cd "D:\AI\智能体工作目录\claude工作目录\学习\yatori-go-desktop-V0.3
 $env:PATH='D:\AI\智能体工作目录\claude工作目录\学习\YatoriAndroidWork\tools\bin;C:\msys64\ucrt64\bin;C:\Users\35862\go\bin;' + $env:PATH
 $env:CGO_ENABLED='1'
 
-.\scripts\build-mobilecore.ps1 -Version 0.3.9 -Target android/arm64 -ApiSchemaVersion 1
+.\scripts\build-mobilecore.ps1 -Version 0.4.0 -Target android/arm64 -ApiSchemaVersion 1
 ```
 
 ### 导入 Core 到 Android
@@ -204,7 +204,7 @@ cd "D:\AI\智能体工作目录\claude工作目录\学习\YatoriAndroidWork\yato
 
 .\scripts\import-desktop-core.ps1 `
   -DesktopReleaseDir "D:\AI\智能体工作目录\claude工作目录\学习\yatori-go-desktop-V0.3.4-clean\release" `
-  -Version 0.3.9 `
+  -Version 0.4.0 `
   -ExpectedApiSchemaVersion 1
 ```
 
@@ -213,14 +213,14 @@ cd "D:\AI\智能体工作目录\claude工作目录\学习\YatoriAndroidWork\yato
 ```powershell
 cd "D:\AI\智能体工作目录\claude工作目录\学习\YatoriAndroidWork\yatori-go-android"
 
-.\scripts\build-apk.ps1 -ImportCore -Version 0.3.9 -ExpectedApiSchemaVersion 1
+.\scripts\build-apk.ps1 -ImportCore -Version 0.4.0 -ExpectedApiSchemaVersion 1
 ```
 
 产物：
 
 ```text
 app/build/outputs/apk/debug/app-debug.apk
-release/Yatori-Android-v0.3.9-arm64-debug-signed.apk
+release/Yatori-Android-v0.4.0-arm64-debug-signed.apk
 ```
 
 ## 已知限制
