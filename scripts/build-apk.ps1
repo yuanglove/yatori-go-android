@@ -40,6 +40,13 @@ $GradleBat = Join-Path $WorkRoot "tools\gradle-8.10.2\bin\gradle.bat"
 if (-not (Test-Path $GradleBat)) {
     $GradleBat = Join-Path $RepoRoot "gradlew.bat"
 }
+# Recreate the final ZIP instead of incrementally replacing the large Go library.
+# Incremental APK updates can leave hundreds of MB of unused space in the archive.
+# Only remove the generated APK; retain source files, dependencies and build caches.
+$ApkPath = Join-Path $RepoRoot "app\build\outputs\apk\debug\app-debug.apk"
+if (Test-Path -LiteralPath $ApkPath) {
+    Remove-Item -LiteralPath $ApkPath -Force
+}
 & $GradleBat assembleDebug --no-daemon "-Dorg.gradle.vfs.watch=false"
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 

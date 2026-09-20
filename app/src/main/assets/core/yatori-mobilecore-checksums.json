@@ -1,11 +1,11 @@
-﻿{
-    "generatedAt":  "2026-07-27 00:29:28",
-    "desktopCoreVersion":  "0.4.0",
-    "coreCommit":  "5bb5525",
-    "apiSchemaVersion":  1,
-    "files":  {
-                  "yatori-mobile-v0.4.0.aar":  "e666e3c920351f2f706e4957c8b705bf3ff7fb323269940fed6b66957f4cefda",
-                  "api-schema.json":  "eb2d5b0b078ad9d154de2c26cf740e1c73ded7ec0eb400be46d9a68e3880d16f",
-                  "yatori-core-version.json":  "dce2e73d435a3abcc2402447f193118670c506517f3fc108196d6decd6f1d523"
-              }
+{
+  "generatedAt": "2026-09-21 02:21:03",
+  "desktopCoreVersion": "0.4.0",
+  "coreCommit": "1ea2343",
+  "apiSchemaVersion": 1,
+  "files": {
+    "yatori-mobile-v0.4.0.aar": "297bd8cf2813ee2cffdbae151bf0594b5fa5b6fb2c8227f3ad8e9398351f5db6",
+    "api-schema.json": "ac016ff4484e8ea3d5dacab68408c488eb471a6f26ad6993374fb751c0654e52",
+    "yatori-core-version.json": "5fe7b4962e589e254fd7dcb253b25afbb599251b3dc7ef463dee6e06ddb8303c"
+  }
 }
